@@ -19,7 +19,7 @@ app.use('/api/tests', require('./routes/tests'));
 app.use('/api/questions', require('./routes/questions'));
 
 // Test route
-app.get('/api/test', (req, res) => {
+app.get('/', (req, res) => {
   res.send('API is working!');
 });
 
