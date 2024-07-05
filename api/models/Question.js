@@ -6,14 +6,36 @@ const QuestionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {
+  type: {
+    nameType: String,
+    content: mongoose.Schema.Types.Mixed,
+  },
+  status: {
     type: String,
+    default: 'active',
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
+  activity: [
+    {
+      author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model('Question', QuestionSchema);
