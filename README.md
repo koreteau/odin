@@ -1,4 +1,4 @@
-# Projet Full Stack : ReactJS, API Node.js/Express et MongoDB
+# Projet Odin : ReactJS, API Node.js/Express et MongoDB
 
 ## Description
 
