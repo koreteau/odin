@@ -93,7 +93,7 @@ export function AdminCreateQuestion() {
                 },
             });
             alert('Nouvelle question créée avec succès !');
-            navigate('/admin/questions');
+            navigate('/register/questions');
         } catch (error) {
             console.error('Error creating question:', error);
             alert('Erreur lors de la création de la question.');
@@ -181,7 +181,7 @@ export function AdminCreateQuestion() {
                 )}
             </CardBody>
             <CardFooter className='flex gap-2'>
-                <Link to='/admin/questions'>
+                <Link to='/register/questions'>
                     <Button variant="outlined" color="red">
                         <span>Annuler</span>
                     </Button>
