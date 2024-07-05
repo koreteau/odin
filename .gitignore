@@ -3,3 +3,7 @@ api/node_modules/
 
 app/.env
 app/node_modules/
+
+
+# MacOS
+.DS_Store
