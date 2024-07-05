@@ -65,7 +65,7 @@ export function Login() {
                     />
                 </CardBody>
                 <CardFooter className="pt-0">
-                    <Button onClick={(event) => signInWithEmailAndPasswordHandler(event, username, password)} className="bg-eds hover:shadow-none" fullWidth>
+                    <Button onClick={(event) => signInWithEmailAndPasswordHandler(event, username, password)} className="bg-current hover:shadow-none" fullWidth>
                         Se Connecter
                     </Button>
                     <Typography variant="small" className="mt-6 flex justify-center">
