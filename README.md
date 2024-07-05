@@ -91,15 +91,15 @@ Ouvrez votre navigateur et allez à l'adresse http://localhost:3000 pour accéde
 
 ### Point de terminaison 
 
-- GET /api/questions : Récupère toutes les questions.
-- GET /api/questions/:id : Récupère une question par ID.
-- PUT /api/questions/:id : Met à jour une question par ID.
-- DELETE /api/questions/:id : Supprime une question par ID.
-- GET /api/tests : Récupère tous les tests.
-- GET /api/tests/:id : Récupère un test par ID.
-- PUT /api/tests/:id : Met à jour un test par ID.
-- DELETE /api/tests/:id : Supprime un test par ID.
-- GET /api/users : Récupère tous les utilisateurs.
+- `GET` /api/questions : Récupère toutes les questions.
+- `GET` /api/questions/:id : Récupère une question par ID.
+- `PUT` /api/questions/:id : Met à jour une question par ID.
+- `DELETE` /api/questions/:id : Supprime une question par ID.
+- `GET` /api/tests : Récupère tous les tests.
+- `GET` /api/tests/:id : Récupère un test par ID.
+- `PUT` /api/tests/:id : Met à jour un test par ID.
+- `DELETE` /api/tests/:id : Supprime un test par ID.
+- `GET` /api/users : Récupère tous les utilisateurs.
 
 ## License
 
