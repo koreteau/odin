@@ -8,7 +8,7 @@ Ce projet est une application web complète comprenant une interface utilisateur
 
 Le projet est structuré en trois parties principales :
 
-- `reactjs-app/`: Contient le code source de l'application ReactJS.
+- `app/`: Contient le code source de l'application ReactJS.
 - `api/`: Contient le code source de l'API développée avec Node.js/Express.
 - `database/`: Contient les scripts et les fichiers nécessaires pour configurer la base de données MongoDB.
 
