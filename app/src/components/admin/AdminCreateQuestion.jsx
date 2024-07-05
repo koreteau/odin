@@ -64,7 +64,7 @@ export function AdminCreateQuestion() {
                 nameType: type,
                 content: []
             },
-            status: 'active', // assuming default status as 'active'
+            status: 'active',
             author: user._id,
             activity: [
                 {
@@ -79,7 +79,7 @@ export function AdminCreateQuestion() {
             questionData.type.content = '';
         } else {
             questionData.type.content = choices.map(choice => ({
-                id: choice.id || Math.random().toString(36).substr(2, 9), // generate random id if not provided
+                id: choice.id || Math.random().toString(36).substr(2, 9),
                 choice: choice.choice,
                 answer: choice.answer,
             }));
@@ -153,6 +153,7 @@ export function AdminCreateQuestion() {
                                     onChange={(e) => handleChoiceChange(index, 'choice', e.target.value)}
                                     size="lg"
                                     className="flex-1"
+                                    color='purple'
                                 />
                                 <Checkbox
                                     checked={choice.answer}
