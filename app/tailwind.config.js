@@ -7,7 +7,6 @@ module.exports = withMT({
     colors: {
       transparent: 'transparent',
       current: '#951B81',
-      'eds': '#951B81',
     },
   },
   plugins: [],
