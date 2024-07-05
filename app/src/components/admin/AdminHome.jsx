@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
-import { Avatar, Button, CardBody, CardHeader, Typography, Spinner, Tabs, TabsHeader, Tab, Input } from "@material-tailwind/react";
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
+import { Avatar, Button, CardBody, CardHeader, Typography, Spinner } from "@material-tailwind/react";
+
 import axios from "axios";
+
 import blankProfile from '../../assets/blank-profile-picture.webp';
+
+
 
 const TABLE_HEAD = ['ID', 'Titre', 'Prénom', 'Nom', 'Date du test'];
 const TABS = [
@@ -11,6 +16,8 @@ const TABS = [
     { label: 'Résultats récents', value: 'recent' },
     { label: 'Résultats anciens', value: 'old' },
 ];
+
+
 
 export function AdminHome() {
     const [user, setUser] = useState(null);
@@ -46,7 +53,7 @@ export function AdminHome() {
 
         const fetchTestResults = async () => {
             try {
-                const response = await axios.get('/api/test-results');
+                const response = await axios.get('/api/test');
                 setTestResults(response.data);
             } catch (error) {
                 console.error('Error fetching test results:', error);
