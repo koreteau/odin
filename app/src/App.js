@@ -13,6 +13,7 @@ import { AdminTests } from './components/admin/AdminTests';
 import { AdminSinglePageTest } from './components/admin/AdminSinglePageTest';
 import { AdminQuestions } from './components/admin/AdminQuestions';
 import { AdminCreateQuestion } from './components/admin/AdminCreateQuestion';
+import { AdminSinglePageQuestion } from './components/admin/AdminSinglePageQuestion';
 
 function PageTitle({ title }) {
   useEffect(() => {
@@ -89,6 +90,7 @@ export default function App() {
                   <Route path="/" element={<><PageTitle title="Accueil" /><AdminHome /></>} />
 
                   <Route path="/register/questions" element={<><PageTitle title="Questions" /><AdminQuestions /> </>} />
+                  <Route path="/register/questions/:id" element={<><PageTitle title="Questions" /><AdminSinglePageQuestion /> </>} />
                   <Route path="/register/questions/new" element={<><PageTitle title="Questions" /><AdminCreateQuestion /> </>} />
 
                   <Route path="/register/tests" element={<><PageTitle title="Tests" /><AdminTests /> </>} />
