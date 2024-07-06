@@ -13,7 +13,7 @@ const TABLE_HEAD = ['ID', 'Title', 'Type', 'Status'];
 const TABS = [
     { label: 'Toutes les questions', value: 'all' },
     { label: 'Questions actives', value: 'active' },
-    { label: 'Questions archivées', value: 'archived' },
+    { label: 'Questions désactivées', value: 'archived' },
 ];
 
 
