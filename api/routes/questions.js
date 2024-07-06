@@ -100,14 +100,13 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ msg: 'Question not found' });
     }
 
-    await question.remove();
+    await question.deleteOne();
     res.json({ msg: 'Question removed' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
-
 
 
 
