@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Typography, CardHeader, CardBody, Checkbox, Input, Spinner, Timeline, TimelineItem, TimelineConnector, TimelineIcon, TimelineHeader } from '@material-tailwind/react';
+
+import { Button, Typography, Checkbox, CardHeader, CardBody, Input, Spinner, Timeline, TimelineItem, TimelineConnector, TimelineIcon, TimelineHeader, Select, Option } from '@material-tailwind/react';
 import { ArrowLeftIcon, TrashIcon, ArrowPathIcon, PlusIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+
 import axios from 'axios';
+
+
 
 export function AdminSinglePageQuestion() {
     const { id } = useParams();
@@ -10,9 +15,35 @@ export function AdminSinglePageQuestion() {
     const [editMode, setEditMode] = useState(false);
     const [title, setTitle] = useState('');
     const [type, setType] = useState({ nameType: '', content: '' });
+    const [status, setStatus] = useState('');
     const [isModified, setIsModified] = useState(false);
     const [historyItems, setHistoryItems] = useState([]);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                const { token } = JSON.parse(storedUser);
+                if (token) {
+                    try {
+                        const response = await axios.get('/api/auth', {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        });
+                        setUser(response.data);
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                        localStorage.removeItem('user');
+                    }
+                }
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     useEffect(() => {
         const fetchQuestionData = async () => {
@@ -21,6 +52,7 @@ export function AdminSinglePageQuestion() {
                 setSelectedQuestion(response.data);
                 setTitle(response.data.title);
                 setType(response.data.type);
+                setStatus(response.data.status);
                 const historyWithAuthors = await Promise.all(
                     response.data.activity.map(async (item) => {
                         const authorName = await fetchAuthorData(item.author);
@@ -28,7 +60,7 @@ export function AdminSinglePageQuestion() {
                         return { ...item, authorName, date: formattedDate };
                     })
                 );
-                setHistoryItems(historyWithAuthors);
+                setHistoryItems(historyWithAuthors.reverse());
             } catch (error) {
                 console.error('Error retrieving data:', error);
             }
@@ -40,7 +72,7 @@ export function AdminSinglePageQuestion() {
     const fetchAuthorData = async (authorId) => {
         try {
             const authorData = await axios.get(`/api/users/${authorId}`);
-            return authorData.data.username;
+            return `${authorData.data.firstName} ${authorData.data.lastName}`;
         } catch (error) {
             console.error('Error fetching author data:', error);
             return 'Unknown';
@@ -49,7 +81,7 @@ export function AdminSinglePageQuestion() {
 
     const checkIsModified = () => {
         if (!selectedQuestion) return;
-        if (title !== selectedQuestion.title || JSON.stringify(type) !== JSON.stringify(selectedQuestion.type)) {
+        if (title !== selectedQuestion.title || JSON.stringify(type) !== JSON.stringify(selectedQuestion.type) || status !== selectedQuestion.status) {
             setIsModified(true);
         } else {
             setIsModified(false);
@@ -58,7 +90,7 @@ export function AdminSinglePageQuestion() {
 
     useEffect(() => {
         checkIsModified();
-    }, [title, type]);
+    }, [title, type, status]);
 
     const handleSaveQuestionChanges = async () => {
         if (!isModified) {
@@ -66,10 +98,30 @@ export function AdminSinglePageQuestion() {
             return;
         }
 
+        const updatedType = type.nameType === 'simple' ? { nameType: type.nameType, content: type.content } : type;
+        const currentDate = new Date();
+
+        const updatedActivity = [
+            ...selectedQuestion.activity,
+            {
+                author: user._id,
+                type: 'update',
+                date: currentDate,
+            },
+        ];
+
         try {
-            await axios.put(`/api/questions/${id}`, { title, type });
+            const storedUser = localStorage.getItem('user');
+            const { token } = storedUser ? JSON.parse(storedUser) : {};
+
+            await axios.put(`/api/questions/${id}`, { title, type: updatedType, status, activity: updatedActivity }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setIsModified(false);
             alert('Modifications enregistrées avec succès.');
+            window.location.reload();
         } catch (error) {
             console.error('Error updating data:', error);
         }
@@ -79,11 +131,11 @@ export function AdminSinglePageQuestion() {
         if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
             return;
         }
-    
+
         try {
             const storedUser = localStorage.getItem('user');
             const { token } = storedUser ? JSON.parse(storedUser) : {};
-    
+
             await axios.delete(`/api/questions/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -96,7 +148,6 @@ export function AdminSinglePageQuestion() {
             alert('Erreur lors de la suppression de la question.');
         }
     };
-    
 
     const getEventTypeLabel = (type) => {
         switch (type) {
@@ -143,13 +194,33 @@ export function AdminSinglePageQuestion() {
         }
     };
 
+    const handleCheckboxChange = (index) => {
+        const newContent = type.content.map((choice, i) => {
+            if (type.nameType === 'qcu') {
+                return { ...choice, answer: i === index };
+            }
+            if (i === index) {
+                return { ...choice, answer: !choice.answer };
+            }
+            return choice;
+        });
+        setType({ ...type, content: newContent });
+    };
+
+    const handleAddOption = () => {
+        setType({
+            ...type,
+            content: [...type.content, { choice: '', answer: false }],
+        });
+    };
+
     return (
         <div>
             <div className="h-full w-full">
                 <CardHeader floated={false} shadow={false} className="rounded-none">
                     <div className="mb-8 grid items-center justify-between gap-8 sm:grid-cols-1 md:grid-cols-2">
                         <div className='flex items-center'>
-                            <Link to='/admin/questions'>
+                            <Link to='/register/questions'>
                                 <Button variant="text" className='hover:bg-none' onClick={() => { setEditMode(false) }}>
                                     <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" color='purple' />
                                 </Button>
@@ -187,18 +258,47 @@ export function AdminSinglePageQuestion() {
                             <div>
                                 <div className='gap-5 mt-5 grid sm:grid-cols-1 md:grid-cols-2'>
                                     <div className='gap-1 w-full'>
+                                        <Typography>ID :</Typography>
+                                        <Input color="purple" value={selectedQuestion._id} disabled />
+                                    </div>
+                                    <div className='gap-1 w-full'>
+                                        <Typography>Statut :</Typography>
+                                        <Select color="purple" value={status} onChange={(value) => setStatus(value)} disabled={!editMode}>
+                                            <Option value="active">Active</Option>
+                                            <Option value="archived">Désactivée</Option>
+                                        </Select>
+                                    </div>
+                                    <div className='gap-1 w-full'>
                                         <Typography>Titre :</Typography>
                                         <Input color="purple" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!editMode} />
                                     </div>
                                     <div className='gap-1 w-full'>
                                         <Typography>Type :</Typography>
-                                        <Input color="purple" value={type.nameType} onChange={(e) => setType({ ...type, nameType: e.target.value })} disabled={!editMode} />
+                                        <Select color="purple" value={type.nameType} onChange={(value) => setType({ ...type, nameType: value, content: value === 'simple' ? '' : [] })} disabled={!editMode}>
+                                            <Option value="simple">Simple</Option>
+                                            <Option value="qcm">QCM</Option>
+                                            <Option value="qcu">QCU</Option>
+                                        </Select>
                                     </div>
+                                    {type.nameType === 'simple' && (
+                                        <div className='gap-1 w-full'>
+                                            <Typography className='pt-2'>Contenu :</Typography>
+                                            <Input
+                                                label="Contenu"
+                                                value={type.content}
+                                                onChange={(e) => setType({ ...type, content: e.target.value })}
+                                                size="lg"
+                                                className="flex-1"
+                                                disabled={!editMode}
+                                                color='purple'
+                                            />
+                                        </div>
+                                    )}
                                     {(type.nameType === 'qcm' || type.nameType === 'qcu') && (
                                         <div className='gap-1 w-full'>
-                                            <Typography>Contenu :</Typography>
+                                            <Typography className='pt-2'>Contenu :</Typography>
                                             {type.content.map((choice, index) => (
-                                                <div key={index} className="flex gap-4 items-center">
+                                                <div key={index} className="flex gap-4 pt-2 items-center">
                                                     <Input
                                                         label={`Option ${index + 1}`}
                                                         value={choice.choice}
@@ -210,20 +310,22 @@ export function AdminSinglePageQuestion() {
                                                         size="lg"
                                                         className="flex-1"
                                                         disabled={!editMode}
+                                                        color='purple'
                                                     />
                                                     <Checkbox
                                                         checked={choice.answer}
-                                                        onChange={(e) => {
-                                                            const newContent = [...type.content];
-                                                            newContent[index].answer = e.target.checked;
-                                                            setType({ ...type, content: newContent });
-                                                        }}
+                                                        onChange={() => handleCheckboxChange(index)}
                                                         color="green"
                                                         label="Correct"
                                                         disabled={!editMode}
                                                     />
                                                 </div>
                                             ))}
+                                            {editMode && (
+                                                <Button className="mt-4" color="green" onClick={handleAddOption}>
+                                                    Ajouter une option
+                                                </Button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
