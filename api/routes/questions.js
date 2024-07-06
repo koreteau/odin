@@ -89,6 +89,50 @@ router.post(
 
 
 
+// @route   PUT /api/questions/:id
+// @desc    Update question by ID
+// @access  Private
+router.put(
+  '/:id',
+  [
+    auth,
+    [
+      check('title', 'Title is required').not().isEmpty(),
+      check('type.nameType', 'Question type is required').not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, type, status, activity } = req.body;
+
+    try {
+      let question = await Question.findById(req.params.id);
+
+      if (!question) {
+        return res.status(404).json({ msg: 'Question not found' });
+      }
+
+      // Update the question fields
+      question.title = title;
+      question.type = type;
+      question.status = status;
+      question.activity = activity; // Update the activity field
+
+      await question.save();
+      res.json(question);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+
+
 // @route   DELETE /api/questions/:id
 // @desc    Delete a question
 // @access  Private
