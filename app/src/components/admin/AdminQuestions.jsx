@@ -114,7 +114,7 @@ export function AdminQuestions() {
                                 return (
                                     <tr key={_id}>
                                         <td className={classes}>
-                                            <Link to={`/settings/questions/${_id}`}>
+                                            <Link to={`/register/questions/${_id}`}>
                                                 <div className="flex items-center gap-3">
                                                     <Typography variant="small" color="blue-gray" className="font-normal hover:underline">
                                                         {_id}
