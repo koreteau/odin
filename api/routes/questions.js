@@ -22,6 +22,27 @@ router.get('/', async (req, res) => {
 
 
 
+// @route   GET /api/questions/:id
+// @desc    Get question by ID
+// @access  Public
+router.get('/:id', async (req, res) => {
+  try {
+    const question = await Question.findById(req.params.id);
+    if (!question) {
+      return res.status(404).json({ msg: 'Question not found' });
+    }
+    res.json(question);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Question not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+
+
 // @route   POST /api/questions
 // @desc    Create a new question
 // @access  Private
@@ -65,6 +86,28 @@ router.post(
     }
   }
 );
+
+
+
+// @route   DELETE /api/questions/:id
+// @desc    Delete a question
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const question = await Question.findById(req.params.id);
+
+    if (!question) {
+      return res.status(404).json({ msg: 'Question not found' });
+    }
+
+    await question.remove();
+    res.json({ msg: 'Question removed' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 
 
