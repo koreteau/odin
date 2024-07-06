@@ -7,24 +7,21 @@ const QuestionSchema = new mongoose.Schema({
     required: true,
   },
   type: {
-    nameType: String,
+    nameType: {
+      type: String,
+      required: true,
+    },
     content: mongoose.Schema.Types.Mixed,
   },
   status: {
     type: String,
     default: 'active',
   },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
   activity: [
     {
       author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
       },
       type: {
         type: String,
