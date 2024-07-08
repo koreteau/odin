@@ -327,7 +327,7 @@ export function AdminSinglePageTest() {
                                     {editMode && (
                                         <Menu>
                                             <MenuHandler>
-                                                <Button className="bg-pixi hover:shadow-none">Sélectionner des questions</Button>
+                                                <Button className="bg-current shadow-none hover:shadow-current">Sélectionner des questions</Button>
                                             </MenuHandler>
                                             <MenuList>
                                                 {availableQuestions.map((question) => (
