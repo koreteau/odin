@@ -14,6 +14,7 @@ import { AdminSinglePageTest } from './components/admin/AdminSinglePageTest';
 import { AdminQuestions } from './components/admin/AdminQuestions';
 import { AdminCreateQuestion } from './components/admin/AdminCreateQuestion';
 import { AdminSinglePageQuestion } from './components/admin/AdminSinglePageQuestion';
+import { AdminCreateTest } from './components/admin/AdminCreateTest';
 
 function PageTitle({ title }) {
   useEffect(() => {
@@ -95,6 +96,7 @@ export default function App() {
 
                   <Route path="/register/tests" element={<><PageTitle title="Tests" /><AdminTests /> </>} />
                   <Route path="/register/tests/:id" element={<><PageTitle title="Tests" /><AdminSinglePageTest /> </>} />
+                  <Route path="/register/tests/new" element={<><PageTitle title="Tests" /><AdminCreateTest /> </>} />
 
                   <Route path="/settings/users" element={<><PageTitle title="Membres" /><AdminUsers /></>} />
                   <Route path="/settings/users/:id" element={<><PageTitle title="Membres" /><AdminSinglePageUser /></>} />
