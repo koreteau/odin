@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { check, validationResult } = require('express-validator');
+const auth = require('../middleware/auth');
 const Test = require('../models/Tests');
+
 
 
 // @route   GET /api/tests
@@ -15,6 +18,7 @@ router.get('/', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
 
 
 // @route   GET /api/tests/:id
@@ -37,44 +41,90 @@ router.get('/:id', async (req, res) => {
 });
 
 
-// @route   PUT /api/tests/:id
-// @desc    Update a test
-// @access  Public
-router.put('/:id', async (req, res) => {
-  const { title, desc } = req.body;
 
-  const testFields = {};
-  if (title) testFields.title = title;
-  if (desc) testFields.desc = desc;
+// @route   POST /api/tests
+// @desc    Create a test
+// @access  Private
+router.post('/', auth, async (req, res) => {
+  const { title, desc, content, status, activity } = req.body;
 
   try {
-    let test = await Test.findById(req.params.id);
+    const newTest = new Test({
+      title,
+      desc,
+      content,
+      status,
+      author: req.user.id,
+      activity
+    });
 
-    if (!test) {
-      return res.status(404).json({ msg: 'Test not found' });
-    }
-
-    test = await Test.findByIdAndUpdate(
-      req.params.id,
-      { $set: testFields },
-      { new: true }
-    );
-
+    const test = await newTest.save();
     res.json(test);
   } catch (err) {
     console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Test not found' });
-    }
     res.status(500).send('Server Error');
   }
 });
 
 
+
+// @route   PUT /api/tests/:id
+// @desc    Update a test
+// @access  Private
+router.put(
+  '/:id',
+  [
+    auth,
+    [
+      check('title', 'Title is required').not().isEmpty(),
+      check('desc', 'Description is required').not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, desc, content, status, activity } = req.body;
+
+    const testFields = {};
+    if (title) testFields.title = title;
+    if (desc) testFields.desc = desc;
+    if (content) testFields.content = content;
+    if (status) testFields.status = status;
+    if (activity) testFields.activity = activity;
+
+    try {
+      let test = await Test.findById(req.params.id);
+
+      if (!test) {
+        return res.status(404).json({ msg: 'Test not found' });
+      }
+
+      test = await Test.findByIdAndUpdate(
+        req.params.id,
+        { $set: testFields },
+        { new: true }
+      );
+
+      res.json(test);
+    } catch (err) {
+      console.error(err.message);
+      if (err.kind === 'ObjectId') {
+        return res.status(404).json({ msg: 'Test not found' });
+      }
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+
+
 // @route   DELETE /api/tests/:id
 // @desc    Delete a test
-// @access  Public
-router.delete('/:id', async (req, res) => {
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
   try {
     const test = await Test.findById(req.params.id);
 
