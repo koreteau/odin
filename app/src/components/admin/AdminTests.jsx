@@ -31,7 +31,7 @@ export function AdminTests() {
       setLoading(true);
       try {
         const response = await axios.get('/api/tests');
-        console.log(response.data); // Ajoutez ce log pour voir les données reçues
+        console.log(response.data);
         setTests(response.data);
       } catch (error) {
         console.error('Error retrieving data:', error);
@@ -70,9 +70,9 @@ export function AdminTests() {
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Link to='/admin/register/tests'>
-              <Button className="flex items-center gap-3 bg-eds shadow-none hover:shadow-eds" size="sm">
-                <PlusIcon strokeWidth={2} className="h-4 w-4" /> Ajouter un test
+            <Link to='/register/tests/new'>
+              <Button className="flex items-center gap-3 bg-current shadow-none hover:shadow-current" size="sm">
+                <PlusIcon strokeWidth={2} className="h-4 w-4" /> Créer un test
               </Button>
             </Link>
           </div>
@@ -134,7 +134,7 @@ export function AdminTests() {
         </Typography>
         <div className="flex gap-2">
           <Button
-            className='bg-eds shadow-none hover:shadow-eds'
+            className='bg-current shadow-none hover:shadow-current'
             size="sm"
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
@@ -142,7 +142,7 @@ export function AdminTests() {
             Précédent
           </Button>
           <Button
-            className='bg-eds shadow-none hover:shadow-eds'
+            className='bg-current shadow-none hover:shadow-current'
             size="sm"
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
