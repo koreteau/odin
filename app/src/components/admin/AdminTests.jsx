@@ -9,7 +9,7 @@ import axios from 'axios';
 
 
 
-const TABLE_HEAD = ['ID', 'Title', 'Date', 'Creator', 'Status'];
+const TABLE_HEAD = ['ID', 'Title', 'Date', 'Status'];
 const TABS = [
   { label: 'Tous les tests', value: 'all' },
   { label: 'Tests actifs', value: 'active' },
@@ -120,7 +120,6 @@ export function AdminTests() {
                   </td>
                   <td className="p-4"><Typography variant="small" className="font-normal">{test.title}</Typography></td>
                   <td className="p-4"><Typography variant="small" className="font-normal">{new Date(test.date).toLocaleString()}</Typography></td>
-                  <td className="p-4"><Typography variant="small" className="font-normal">{test.creator}</Typography></td>
                   <td className="p-4"><Typography variant="small" className="font-normal">{test.status}</Typography></td>
                 </tr>
               ))}
