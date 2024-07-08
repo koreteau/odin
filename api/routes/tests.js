@@ -129,20 +129,23 @@ router.delete('/:id', auth, async (req, res) => {
     const test = await Test.findById(req.params.id);
 
     if (!test) {
+      console.log('Test not found');
       return res.status(404).json({ msg: 'Test not found' });
     }
 
-    await test.remove();
+    // Check if the user deleting the test is the author
+    if (test.author.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
 
+    await test.deleteOne();
     res.json({ msg: 'Test removed' });
   } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Test not found' });
-    }
+    console.error('Server Error:', err.message);
     res.status(500).send('Server Error');
   }
 });
+
 
 
 
